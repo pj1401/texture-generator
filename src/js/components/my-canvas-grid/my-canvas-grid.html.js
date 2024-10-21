@@ -2,6 +2,6 @@ export const htmlTemplate = document.createElement('template')
 
 htmlTemplate.innerHTML = `
   <div id="container">
-    <my-canvas-grid></my-canvas-grid>
+    <canvas id="canvas-grid" width="400" height="400"></canvas>
   </div>
 `
