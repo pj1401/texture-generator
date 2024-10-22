@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-// import PerlinNoise from './lib/perlin-noise/index.js'
+import PerlinNoise from './lib/perlin-noise/index.js'
 
 import { htmlTemplate } from './my-canvas-grid.html.js'
 
@@ -17,6 +17,7 @@ customElements.define('my-canvas-grid',
     #width
     #height
     #scale
+    #perlin
 
     /**
      * Creates an instance of the current type.
@@ -38,6 +39,7 @@ customElements.define('my-canvas-grid',
       this.#width = canvas.width
       this.#height = canvas.height
       this.#scale = 0.05
+      this.#perlin = new PerlinNoise(0, 0)
 
       this.generatePerlinNoise()
     }
@@ -55,18 +57,51 @@ customElements.define('my-canvas-grid',
      * Generates the image.
      */
     generatePerlinNoise () {
-      // TODO: Step through each pixel and generate a colour.
+      // Step through each pixel and generate a colour.
+      for (let x = 0; x < this.#width; x++) {
+        for (let y = 0; y < this.#height; y++) {
+          const noise = this.getNoiseValue(x, y)
+          const color = this.getColorValue(noise)
+          this.colorPixel(color, x, y)
+        }
+      }
+    }
 
-      const noise = this.getNoiseValue()
-      const color = this.getColorValue(noise)
-      this.fillPixel(color)
+    /**
+     * Computes the noise value on (x, y) with scale.
+     *
+     * @param {number} x - The x-coordinate.
+     * @param {number} y - The y-coordinate.
+     * @returns {number} The noise value.
+     */
+    getNoiseValue (x, y) {
+      return this.#perlin.perlin(x * this.#scale, y * this.#scale)
+    }
+
+    /**
+     * Coverts the noise value from [-1, 1] to [0, 255].
+     *
+     * @param {number} noiseValue - The noise value.
+     * @returns {number} The rgb colour value.
+     */
+    getColorValue (noiseValue) {
+      const noiseOffset = 1
+      const colorScale = 128
+      return Math.floor((noiseValue + noiseOffset) * colorScale)
     }
 
     /**
      * Colours a pixel on the grid.
      *
      * @param {number} colorValue - The colour value in rgb.
+     * @param {number} x - The x-coordinate.
+     * @param {number} y - The y-coordinate.
      */
-    fillPixel (colorValue) {}
+    colorPixel (colorValue, x, y) {
+      const pixelWidth = 1
+      const pixelHeight = 1
+      this.#ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`
+      this.#ctx.fillRect(x, y, pixelWidth, pixelHeight)
+    }
   }
 )
