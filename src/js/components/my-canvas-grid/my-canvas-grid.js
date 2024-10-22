@@ -17,6 +17,7 @@ customElements.define('my-canvas-grid',
     #width
     #height
     #scale
+    #seed = 0
     #perlin
 
     /**
@@ -39,7 +40,6 @@ customElements.define('my-canvas-grid',
       this.#width = canvas.width
       this.#height = canvas.height
       this.#scale = 0.05
-      this.#perlin = new PerlinNoise(0, 0)
 
       this.generatePerlinNoise()
     }
@@ -54,9 +54,25 @@ customElements.define('my-canvas-grid',
     }
 
     /**
+     * Called by the browser engine when an attribute changes.
+     *
+     * @param {string} name of the attribute.
+     * @param {any} oldValue the old attribute value.
+     * @param {any} newValue the new attribute value.
+     */
+    attributeChangedCallback (name, oldValue, newValue) {
+      if (name === 'seed' && newValue !== oldValue) {
+        this.#seed = parseInt(newValue)
+        this.generatePerlinNoise()
+      }
+    }
+
+    /**
      * Generates the image.
      */
     generatePerlinNoise () {
+      this.#perlin = new PerlinNoise(0, 0, this.#seed)
+
       // Step through each pixel and generate a colour.
       for (let x = 0; x < this.#width; x++) {
         for (let y = 0; y < this.#height; y++) {
@@ -68,7 +84,7 @@ customElements.define('my-canvas-grid',
     }
 
     /**
-     * Computes the noise value on (x, y) with scale.
+     * Computes the noise value on (x, y) with scaling.
      *
      * @param {number} x - The x-coordinate.
      * @param {number} y - The y-coordinate.

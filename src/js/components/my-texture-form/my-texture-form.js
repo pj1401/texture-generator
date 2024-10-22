@@ -32,6 +32,11 @@ customElements.define('my-texture-form',
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
+      this.shadowRoot.querySelector('#seed').addEventListener('change', (event) => {
+        this.dispatchEvent(new window.CustomEvent('texture-form:seed-change', { bubbles: true, detail: event.target.value }))
+      }
+      )
+      this.shadowRoot.addEventListener('submit')
     }
   }
 )

@@ -34,5 +34,21 @@ customElements.define('my-texture-generator',
 
       this.#canvasGrid = this.shadowRoot.querySelector('my-canvas-grid')
     }
+
+    /**
+     * Called after the element is inserted into the DOM.
+     */
+    connectedCallback () {
+      this.shadowRoot.addEventListener('texture-form:seed-change', (event) => this.#onFormChange(event))
+    }
+
+    /**
+     * Handle the form change event.
+     *
+     * @param {event} event - The texture-form:change event.
+     */
+    #onFormChange (event) {
+      this.#canvasGrid.setAttribute('seed', event.detail)
+    }
   }
 )
