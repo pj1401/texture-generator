@@ -19,3 +19,13 @@ Exempel utskrift:
   ➜  Network: use --host to expose
   ➜  press h + enter to show help
 ```
+
+## Testing
+
+```bash
+npm run test
+```
+
+```bash
+npm run test:only <PATH>
+```

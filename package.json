@@ -9,7 +9,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "lint": "npx eslint ./src || exit 0",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx --node-options=--experimental-vm-modules jest || exit 0",
+    "test:only": "npx --node-options=--experimental-vm-modules jest -t"
   },
   "author": "Patricia Johansson <pj222uc@student.lnu.se>",
   "contributors": [
@@ -19,6 +20,7 @@
   "private": true,
   "devDependencies": {
     "@lnu/eslint-config": "^1.1.10",
+    "jest": "^29.7.0",
     "vite": "^5.4.4"
   }
 }

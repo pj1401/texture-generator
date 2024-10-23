@@ -34,8 +34,7 @@ customElements.define('my-texture-form',
     connectedCallback () {
       this.shadowRoot.querySelector('#seed').addEventListener('change', (event) => {
         this.dispatchEvent(new window.CustomEvent('texture-form:seed-change', { bubbles: true, detail: event.target.value }))
-      }
-      )
+      })
       this.shadowRoot.addEventListener('submit')
     }
   }
