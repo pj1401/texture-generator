@@ -1,14 +1,17 @@
 /**
- * @file Tests for the my-canvas-grid.js file.
+ * @file Tests for the CanvasGrid.js file.
  * @module test/CanvasGrid.test.js
  * @author Patricia Johansson <pj222uc@student.lnu.se>
  * @version 1.0.0
  */
 
-jest.mock('../src/js/components/my-canvas-grid/')
+import CanvasGrid from '../src/js/components/my-canvas-grid/lib/CanvasGrid.js'
 
-test('Image is generated after form is changed', () => {
-  const canvasGrid = require('../src/js/components/my-canvas-grid/generatePerlinNoise')
-  console.log(canvasGrid)
-  expect(canvasGrid).toHaveBeenCalled()
+describe('Generate noise', () => {
+  test('Generate the image after attributes are changed', () => {
+    const canvasGrid = new CanvasGrid(400, 400, 0)
+
+    canvasGrid.generatePerlinNoise(256, 256, 463)
+    expect(canvasGrid.colorPixel()).toHaveBeenCalled()
+  })
 })
