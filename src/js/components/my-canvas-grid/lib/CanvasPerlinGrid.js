@@ -37,11 +37,20 @@ export default class CanvasPerlinGrid extends OffscreenCanvas {
    * @param {NoiseGrid} noiseGrid - The grid object.
    */
   generateImage (noiseGrid) {
+    this.#updateGrid(noiseGrid)
+    this.#perlin = new PerlinNoise(0, 0, this.#perlinGrid.seed)
+    this.#generateGridColors()
+  }
+
+  /**
+   * Updates the grid.
+   *
+   * @param {NoiseGrid} noiseGrid - The grid object.
+   */
+  #updateGrid (noiseGrid) {
     this.#perlinGrid = noiseGrid
     this.width = noiseGrid.width
     this.height = noiseGrid.height
-    this.#perlin = new PerlinNoise(0, 0, this.#perlinGrid.seed)
-    this.#generateGridColors()
   }
 
   /**

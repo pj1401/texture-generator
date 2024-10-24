@@ -4,6 +4,7 @@
  * @version 1.0.0
  */
 
+import Attribute from './lib/Attribute.js'
 import CanvasPerlinGrid from './lib/CanvasPerlinGrid.js'
 import NoiseGrid from './lib/NoiseGrid.js'
 
@@ -80,31 +81,38 @@ customElements.define('my-canvas-grid',
      * @param {any} newValue the new attribute value.
      */
     attributeChangedCallback (name, oldValue, newValue) {
-      if (this.#attributeHasChanged('seed', name, oldValue, newValue)) {
+      const attributeValue = new Attribute(name, oldValue, newValue)
+
+      if (this.#attributeHasChanged('seed', attributeValue)) {
         this.#perlinGrid.seed = parseInt(newValue)
-        this.renderCanvasImage()
-      } else if (this.#attributeHasChanged('width', name, oldValue, newValue)) {
-        this.#canvasElement.width = parseInt(newValue)
-        this.#perlinGrid.width = this.#canvasElement.width
-        this.renderCanvasImage()
-      } else if (this.#attributeHasChanged('height', name, oldValue, newValue)) {
-        this.#canvasElement.height = parseInt(newValue)
-        this.#perlinGrid.height = this.#canvasElement.height
-        this.renderCanvasImage()
+      } else if (this.#attributeHasChanged('width', attributeValue)) {
+        this.#updateAttribute('width', parseInt(newValue))
+      } else if (this.#attributeHasChanged('height', attributeValue)) {
+        this.#updateAttribute('height', parseInt(newValue))
       }
+      this.renderCanvasImage()
     }
 
     /**
      * Checks if the value of the attribute has changed.
      *
      * @param {string} attributeName - The attribute name.
-     * @param {string} name - The attribute name that is passed by the browser.
-     * @param {any} oldValue - The old attribute value.
-     * @param {any} newValue - The new attribute value.
+     * @param {Attribute} attribute - The attribute name that is passed by the browser.
      * @returns {boolean} True if the value of the attribute has changed.
      */
-    #attributeHasChanged (attributeName, name, oldValue, newValue) {
-      return name === attributeName && newValue !== oldValue
+    #attributeHasChanged (attributeName, attribute) {
+      return attribute.name === attributeName && attribute.newValue !== attribute.oldValue
+    }
+
+    /**
+     * Updates an attribute.
+     *
+     * @param {string} attributeName - The attribute name.
+     * @param {number} newValue - The new attribute value.
+     */
+    #updateAttribute (attributeName, newValue) {
+      this.#canvasElement[attributeName] = newValue
+      this.#perlinGrid[attributeName] = this.#canvasElement[attributeName]
     }
   }
 )
