@@ -15,6 +15,8 @@ customElements.define('my-canvas-grid',
    * Represents a my-canvas-grid element.
    */
   class extends HTMLElement {
+    #canvasElement
+
     /**
      * @type {CanvasRenderingContext2D}
      */
@@ -41,10 +43,10 @@ customElements.define('my-canvas-grid',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(htmlTemplate.content.cloneNode(true))
 
-      const canvas = this.shadowRoot.querySelector('#canvas-grid')
-      this.#renderingContext2D = canvas.getContext('2d')
+      this.#canvasElement = this.shadowRoot.querySelector('#canvas-grid')
+      this.#renderingContext2D = this.#canvasElement.getContext('2d')
 
-      this.#perlinGrid = new NoiseGrid(canvas.width, canvas.height)
+      this.#perlinGrid = new NoiseGrid(this.#canvasElement.width, this.#canvasElement.height)
 
       this.renderCanvasImage()
     }
@@ -66,10 +68,31 @@ customElements.define('my-canvas-grid',
      * @param {any} newValue the new attribute value.
      */
     attributeChangedCallback (name, oldValue, newValue) {
-      if (name === 'seed' && newValue !== oldValue) {
+      if (this.#attributeHasChanged('seed', name, oldValue, newValue)) {
         this.#perlinGrid.seed = parseInt(newValue)
         this.renderCanvasImage()
+      } else if (this.#attributeHasChanged('width', name, oldValue, newValue)) {
+        this.#canvasElement.width = parseInt(newValue)
+        this.#perlinGrid.width = this.#canvasElement.width
+        this.renderCanvasImage()
+      } else if (this.#attributeHasChanged('height', name, oldValue, newValue)) {
+        this.#canvasElement.height = parseInt(newValue)
+        this.#perlinGrid.height = this.#canvasElement.height
+        this.renderCanvasImage()
       }
+    }
+
+    /**
+     * Checks if the value of the attribute has changed.
+     *
+     * @param {string} attributeName - The attribute name.
+     * @param {string} name - The attribute name that is passed by the browser.
+     * @param {any} oldValue - The old attribute value.
+     * @param {any} newValue - The new attribute value.
+     * @returns {boolean} True if the value of the attribute has changed.
+     */
+    #attributeHasChanged (attributeName, name, oldValue, newValue) {
+      return name === attributeName && newValue !== oldValue
     }
 
     /**

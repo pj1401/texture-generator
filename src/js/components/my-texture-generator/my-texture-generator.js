@@ -39,7 +39,7 @@ customElements.define('my-texture-generator',
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
-      this.shadowRoot.addEventListener('texture-form:seed-change', (event) => this.#onFormChange(event))
+      this.shadowRoot.addEventListener('texture-form:change', (event) => this.#onFormChange(event))
     }
 
     /**
@@ -48,7 +48,7 @@ customElements.define('my-texture-generator',
      * @param {event} event - The texture-form:change event.
      */
     #onFormChange (event) {
-      this.#canvasGrid.setAttribute('seed', event.detail)
+      this.#canvasGrid.setAttribute(event.detail.name, event.detail.value)
     }
   }
 )
