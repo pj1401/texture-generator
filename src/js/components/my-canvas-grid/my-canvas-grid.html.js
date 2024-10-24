@@ -1,7 +1,7 @@
 export const htmlTemplate = document.createElement('template')
 
 htmlTemplate.innerHTML = `
-  <div part="back" id="container">
-    <h2 part="text"></h2>
+  <div id="container">
+    <canvas id="canvas-grid" width="400" height="400"></canvas>
   </div>
 `
