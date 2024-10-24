@@ -4,12 +4,18 @@
  * @version 1.1.0
  */
 
+import Grid from './Grid.js'
+import { checkIfNumber } from './errorHandlers.js'
+
 /**
  * Represents a grid containing some form of noise.
  */
-export default class NoiseGrid {
-  #width
-  #height
+export default class NoiseGrid extends Grid {
+  /**
+   * The scale of the noise. Determines how "detailed" the noise looks.
+   */
+  #scale
+
   #seed
 
   /**
@@ -20,43 +26,19 @@ export default class NoiseGrid {
    * @param {number} [seed=0] - Optional seed used to randomise.
    */
   constructor (width, height, seed = 0) {
-    this.width = width
-    this.height = height
+    super(width, height)
+
     this.seed = seed
+    this.#scale = 0.05
   }
 
   /**
-   * Returns the width of the grid.
+   * Returns the scale of the noise.
    *
-   * @returns {number} The width of the grid.
+   * @returns {number} The scale of the noise.
    */
-  get width () {
-    return this.#width
-  }
-
-  /**
-   * Sets the width of the grid.
-   */
-  set width (width) {
-    this.#checkIfNumber(width)
-    this.#width = width
-  }
-
-  /**
-   * Returns the height of the grid.
-   *
-   * @returns {number} The height of the grid.
-   */
-  get height () {
-    return this.#height
-  }
-
-  /**
-   * Sets the height of the grid.
-   */
-  set height (height) {
-    this.#checkIfNumber(height)
-    this.#height = height
+  get scale () {
+    return this.#scale
   }
 
   /**
@@ -72,19 +54,7 @@ export default class NoiseGrid {
    * Sets the seed that is used to generate the noise.
    */
   set seed (seed) {
-    this.#checkIfNumber(seed)
+    checkIfNumber(seed)
     this.#seed = seed
-  }
-
-  /**
-   * Determines whether or not the passed argument is a number.
-   *
-   * @param {object} value - The value to be tested.
-   * @throws {TypeError} The passed argument is not a number.
-   */
-  #checkIfNumber (value) {
-    if (Number.isNaN(value) || typeof value !== 'number') {
-      throw new TypeError('The passed argument is not a number.')
-    }
   }
 }

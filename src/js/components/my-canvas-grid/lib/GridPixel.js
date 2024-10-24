@@ -10,8 +10,8 @@ import { GridComponent } from './perlin-noise/src/GridComponent.js'
  * Represents a pixel on a grid.
  */
 export default class GridPixel extends GridComponent {
-  pixelWidth = 1
-  pixelHeight = 1
+  #width = 1
+  #height = 1
   #color
 
   /**
@@ -24,6 +24,24 @@ export default class GridPixel extends GridComponent {
   constructor (x, y, color) {
     super(x, y)
     this.color = color
+  }
+
+  /**
+   * Returns the width of the pixel.
+   *
+   * @returns {number} The width of the pixel.
+   */
+  get width () {
+    return this.#width
+  }
+
+  /**
+   * Returns the height of the pixel.
+   *
+   * @returns {number} The height of the pixel.
+   */
+  get height () {
+    return this.#height
   }
 
   /**

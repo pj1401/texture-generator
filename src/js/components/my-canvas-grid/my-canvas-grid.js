@@ -4,6 +4,7 @@
  * @version 1.0.0
  */
 
+import GridPixel from './lib/GridPixel.js'
 import NoiseGrid from './lib/NoiseGrid.js'
 import PerlinNoise from './lib/perlin-noise/index.js'
 
@@ -15,9 +16,8 @@ customElements.define('my-canvas-grid',
    */
   class extends HTMLElement {
     #ctx
-    #grid
     #perlin
-    #scale
+    #perlinGrid
 
     /**
      * Creates an instance of the current type.
@@ -30,16 +30,12 @@ customElements.define('my-canvas-grid',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(htmlTemplate.content.cloneNode(true))
 
-      // TODO: A method that generates a noise value for every pixel in the grid.
-      // TODO: The noise value has a corresponding colour.
-
       const canvas = this.shadowRoot.querySelector('#canvas-grid')
       this.#ctx = canvas.getContext('2d')
 
-      this.#grid = new NoiseGrid(canvas.width, canvas.height)
-      this.#scale = 0.05
+      this.#perlinGrid = new NoiseGrid(canvas.width, canvas.height)
 
-      this.generatePerlinNoise()
+      this.generatePerlinNoise(this.#perlinGrid)
     }
 
     /**
@@ -60,23 +56,27 @@ customElements.define('my-canvas-grid',
      */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'seed' && newValue !== oldValue) {
-        this.#grid.seed = parseInt(newValue)
-        this.generatePerlinNoise()
+        this.#perlinGrid.seed = parseInt(newValue)
+        this.generatePerlinNoise(this.#perlinGrid)
       }
     }
 
     /**
      * Generates the image.
+     *
+     * @param {NoiseGrid} grid - The grid object.
      */
-    generatePerlinNoise () {
-      this.#perlin = new PerlinNoise(0, 0, this.#grid.seed)
+    generatePerlinNoise (grid) {
+      this.#perlin = new PerlinNoise(0, 0, grid.seed)
 
       // Step through each pixel and generate a colour.
-      for (let x = 0; x < this.#grid.width; x++) {
-        for (let y = 0; y < this.#grid.height; y++) {
-          const noise = this.getNoiseValue(x, y)
-          const color = this.getColorValue(noise)
-          this.colorPixel(color, x, y)
+      for (let x = 0; x < grid.width; x++) {
+        for (let y = 0; y < grid.height; y++) {
+          const pixel = new GridPixel(x, y)
+          const noise = this.getNoiseValue(grid, pixel)
+          const colorValue = this.getColorValue(noise)
+          pixel.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`
+          this.colorPixel(pixel)
         }
       }
     }
@@ -84,12 +84,12 @@ customElements.define('my-canvas-grid',
     /**
      * Computes the noise value on (x, y) with scaling.
      *
-     * @param {number} x - The x-coordinate.
-     * @param {number} y - The y-coordinate.
+     * @param {NoiseGrid} grid - The grid object.
+     * @param {GridPixel} pixel - The pixel where the noise is generated.
      * @returns {number} The noise value.
      */
-    getNoiseValue (x, y) {
-      return this.#perlin.perlin(x * this.#scale, y * this.#scale)
+    getNoiseValue (grid, pixel) {
+      return this.#perlin.perlin(pixel.x * grid.scale, pixel.y * grid.scale)
     }
 
     /**
@@ -107,15 +107,11 @@ customElements.define('my-canvas-grid',
     /**
      * Colours a pixel on the grid.
      *
-     * @param {number} colorValue - The colour value in rgb.
-     * @param {number} x - The x-coordinate.
-     * @param {number} y - The y-coordinate.
+     * @param {GridPixel} pixel - The pixel to be filled.
      */
-    colorPixel (colorValue, x, y) {
-      const pixelWidth = 1
-      const pixelHeight = 1
-      this.#ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`
-      this.#ctx.fillRect(x, y, pixelWidth, pixelHeight)
+    colorPixel (pixel) {
+      this.#ctx.fillStyle = pixel.color
+      this.#ctx.fillRect(pixel.x, pixel.y, pixel.width, pixel.height)
     }
   }
 )
