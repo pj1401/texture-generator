@@ -15,8 +15,19 @@ customElements.define('my-canvas-grid',
    * Represents a my-canvas-grid element.
    */
   class extends HTMLElement {
-    #ctx
+    /**
+     * @type {CanvasRenderingContext2D}
+     */
+    #renderingContext2D
+
+    /**
+     * @type {PerlinNoise}
+     */
     #perlin
+
+    /**
+     * @type {NoiseGrid}
+     */
     #perlinGrid
 
     /**
@@ -31,11 +42,11 @@ customElements.define('my-canvas-grid',
       this.shadowRoot.appendChild(htmlTemplate.content.cloneNode(true))
 
       const canvas = this.shadowRoot.querySelector('#canvas-grid')
-      this.#ctx = canvas.getContext('2d')
+      this.#renderingContext2D = canvas.getContext('2d')
 
       this.#perlinGrid = new NoiseGrid(canvas.width, canvas.height)
 
-      this.generatePerlinNoise(this.#perlinGrid)
+      this.renderCanvasImage()
     }
 
     /**
@@ -57,39 +68,52 @@ customElements.define('my-canvas-grid',
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'seed' && newValue !== oldValue) {
         this.#perlinGrid.seed = parseInt(newValue)
-        this.generatePerlinNoise(this.#perlinGrid)
+        this.renderCanvasImage()
       }
     }
 
     /**
      * Generates the image.
-     *
-     * @param {NoiseGrid} grid - The grid object.
      */
-    generatePerlinNoise (grid) {
-      this.#perlin = new PerlinNoise(0, 0, grid.seed)
+    renderCanvasImage () {
+      this.#perlin = new PerlinNoise(0, 0, this.#perlinGrid.seed)
+      this.#generateGridColors()
+    }
 
+    /**
+     * Generates a colour for every pixel in the image.
+     */
+    #generateGridColors () {
       // Step through each pixel and generate a colour.
-      for (let x = 0; x < grid.width; x++) {
-        for (let y = 0; y < grid.height; y++) {
+      for (let x = 0; x < this.#perlinGrid.width; x++) {
+        for (let y = 0; y < this.#perlinGrid.height; y++) {
           const pixel = new GridPixel(x, y)
-          const noise = this.getNoiseValue(grid, pixel)
-          const colorValue = this.getColorValue(noise)
-          pixel.color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`
-          this.colorPixel(pixel)
+          pixel.color = this.#getColorString(pixel)
+          this.#colorPixel(pixel)
         }
       }
     }
 
     /**
+     * Get the colour of the pixel.
+     *
+     * @param {GridPixel} pixel - The pixel where the noise is generated.
+     * @returns {string} The css string value of the color.
+     */
+    #getColorString (pixel) {
+      const noise = this.#getNoiseValue(pixel)
+      const colorValue = this.#getColorValue(noise)
+      return `rgb(${colorValue}, ${colorValue}, ${colorValue})`
+    }
+
+    /**
      * Computes the noise value on (x, y) with scaling.
      *
-     * @param {NoiseGrid} grid - The grid object.
      * @param {GridPixel} pixel - The pixel where the noise is generated.
      * @returns {number} The noise value.
      */
-    getNoiseValue (grid, pixel) {
-      return this.#perlin.perlin(pixel.x * grid.scale, pixel.y * grid.scale)
+    #getNoiseValue (pixel) {
+      return this.#perlin.perlin(pixel.x * this.#perlinGrid.scale, pixel.y * this.#perlinGrid.scale)
     }
 
     /**
@@ -98,7 +122,7 @@ customElements.define('my-canvas-grid',
      * @param {number} noiseValue - The noise value.
      * @returns {number} The rgb colour value.
      */
-    getColorValue (noiseValue) {
+    #getColorValue (noiseValue) {
       const noiseOffset = 1
       const colorScale = 128
       return Math.floor((noiseValue + noiseOffset) * colorScale)
@@ -109,9 +133,9 @@ customElements.define('my-canvas-grid',
      *
      * @param {GridPixel} pixel - The pixel to be filled.
      */
-    colorPixel (pixel) {
-      this.#ctx.fillStyle = pixel.color
-      this.#ctx.fillRect(pixel.x, pixel.y, pixel.width, pixel.height)
+    #colorPixel (pixel) {
+      this.#renderingContext2D.fillStyle = pixel.color
+      this.#renderingContext2D.fillRect(pixel.x, pixel.y, pixel.width, pixel.height)
     }
   }
 )
