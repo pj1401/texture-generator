@@ -32,16 +32,34 @@ customElements.define('my-texture-form',
      * Called after the element is inserted into the DOM.
      */
     connectedCallback () {
-      this.shadowRoot.querySelector('#seed').addEventListener('change', (event) => {
-        this.dispatchEvent(new window.CustomEvent('texture-form:change', { bubbles: true, detail: { name: 'seed', value: event.target.value } }))
-      })
-      this.shadowRoot.querySelector('#width').addEventListener('change', (event) => {
-        this.dispatchEvent(new window.CustomEvent('texture-form:change', { bubbles: true, detail: { name: 'width', value: event.target.value } }))
-      })
-      this.shadowRoot.querySelector('#height').addEventListener('change', (event) => {
-        this.dispatchEvent(new window.CustomEvent('texture-form:change', { bubbles: true, detail: { name: 'height', value: event.target.value } }))
-      })
-      this.shadowRoot.addEventListener('submit')
+      this.shadowRoot.querySelector('#seed').addEventListener('change',
+        (event) => this.#dispatchFormChangeEvent(event, 'seed'))
+      this.shadowRoot.querySelector('#width').addEventListener('change',
+        (event) => this.#dispatchFormChangeEvent(event, 'width'))
+      this.shadowRoot.querySelector('#height').addEventListener('change',
+        (event) => this.#dispatchFormChangeEvent(event, 'height'))
+    }
+
+    /**
+     * Dispatches an event when an input is changed.
+     *
+     * @param {event} event - The event.
+     * @param {string} attributeName - The name of the changed attribute.
+     */
+    #dispatchFormChangeEvent (event, attributeName) {
+      this.dispatchEvent(new window.CustomEvent('texture-form:change', {
+        bubbles: true,
+        detail: { name: attributeName, value: event.target.value }
+      }))
+    }
+
+    /**
+     * Called after the element has been removed from the DOM.
+     */
+    disconnectedCallback () {
+      this.shadowRoot.querySelector('#seed').removeEventListener('change', this.#dispatchFormChangeEvent)
+      this.shadowRoot.querySelector('#width').removeEventListener('change', this.#dispatchFormChangeEvent)
+      this.shadowRoot.querySelector('#height').removeEventListener('change', this.#dispatchFormChangeEvent)
     }
   }
 )
