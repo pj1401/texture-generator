@@ -30,17 +30,13 @@ export default class PerlinNoise {
   /**
    * Initialises the object.
    *
-   * @param {number} x - The x-coordinate.
-   * @param {number} y - The y-coordinate.
    * @param {number} [seed=0] - Optional seed used to randomise.
    */
-  constructor (x, y, seed = 0) {
-    checkIfNumber(x)
-    checkIfNumber(y)
+  constructor (seed = 0) {
     checkIfNumber(seed)
 
     this.#seed = seed
-    this.#computePerlinNoise(x, y)
+    this.#computePerlinNoise(new Point(0, 0))
   }
 
   /**
@@ -50,10 +46,8 @@ export default class PerlinNoise {
    * @param {number} y - The y-coordinate.
    * @returns {number} The perlin noise.
    */
-  perlin (x, y) {
-    checkIfNumber(x)
-    checkIfNumber(y)
-    this.#computePerlinNoise(x, y)
+  generatePerlinNoise (x, y) {
+    this.#computePerlinNoise(new Point(x, y))
 
     return this.#perlinValue
   }
@@ -61,14 +55,13 @@ export default class PerlinNoise {
   /**
    * Computes the perlin noise.
    *
-   * @param {number} x - The x-coordinate.
-   * @param {number} y - The y-coordinate.
+   * @param {Point} point - The point that the noise is generated on.
    */
-  #computePerlinNoise (x, y) {
-    const gridPoints = this.#findGridPoints(x, y)
-    const randomGradients = this.#createRandomGradients(gridPoints)
-    const vectors = this.#computeVectors(gridPoints, x, y)
-    const dotProducts = this.#computeDotProducts(randomGradients, vectors)
+  #computePerlinNoise (point) {
+    const gridPoints = this.#getGridPoints(point)
+    const randomGradients = this.#getRandomGradients(gridPoints)
+    const vectors = this.#getVectors(gridPoints, point)
+    const dotProducts = this.#getDotProducts(randomGradients, vectors)
 
     // The fade smoothens the interpolations.
     const fadeX = this.#fade(vectors[0].x)
@@ -83,30 +76,29 @@ export default class PerlinNoise {
   /**
    * Determine the corners.
    *
-   * @param {number} x - The x-coordinate.
-   * @param {number} y - The y-coordinate.
-   * @returns {object} The grid points.
+   * @param {Point} point - The point that the noise is generated on.
+   * @returns {[Point]} The grid points.
    */
-  #findGridPoints (x, y) {
-    const point0 = new Point(Math.floor(x), Math.floor(y))
+  #getGridPoints (point) {
+    const point0 = new Point(Math.floor(point.x), Math.floor(point.y))
 
-    return {
-      point00: point0,
-      point10: new Point(point0.x + 1, point0.y),
-      point01: new Point(point0.x, point0.y + 1),
-      point11: new Point(point0.x + 1, point0.y + 1)
-    }
+    return [
+      point0,
+      new Point(point0.x + 1, point0.y),
+      new Point(point0.x, point0.y + 1),
+      new Point(point0.x + 1, point0.y + 1)
+    ]
   }
 
   /**
    * Create random gradients for each corner.
    *
-   * @param {{Point}} corners - The grid points.
+   * @param {[Point]} corners - The grid points.
    * @returns {[RandomGradient]} The randomised gradients.
    */
-  #createRandomGradients (corners) {
+  #getRandomGradients (corners) {
     const randomGradients = []
-    for (const corner of Object.values(corners)) {
+    for (const corner of corners) {
       randomGradients.push(new RandomGradient(corner, this.#seed))
     }
     return randomGradients
@@ -115,16 +107,15 @@ export default class PerlinNoise {
   /**
    * Compute the vectors from the corners to (x, y).
    *
-   * @param {object} corners - The grid points.
-   * @param {number} x - The x-coordinate.
-   * @param {number} y - The y-coordinate.
+   * @param {[Point]} corners - The grid points.
+   * @param {Point} point - The point that the noise is generated on.
    * @returns {[Vector]} The vectors.
    */
-  #computeVectors (corners, x, y) {
-    const dx0 = x - corners.point00.x
-    const dy0 = y - corners.point00.y
-    const dx1 = x - corners.point11.x
-    const dy1 = y - corners.point11.y
+  #getVectors (corners, point) {
+    const dx0 = point.x - corners[0].x
+    const dy0 = point.y - corners[0].y
+    const dx1 = point.x - corners[3].x
+    const dy1 = point.y - corners[3].y
 
     return [
       new Vector(dx0, dy0),
@@ -141,7 +132,7 @@ export default class PerlinNoise {
    * @param {[Vector]} vectors - The vectors.
    * @returns {[number]} The dot products.
    */
-  #computeDotProducts (randomGradients, vectors) {
+  #getDotProducts (randomGradients, vectors) {
     const dotProducts = []
     for (let i = 0; i < randomGradients.length; i++) {
       dotProducts.push(randomGradients[i].dotProduct(vectors[i]))

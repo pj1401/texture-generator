@@ -33,7 +33,7 @@ export class RandomGradient extends Vector {
    * @param {number} seed - Optional seed used to randomise.
    */
   #randomiseGradient (x, y, seed) {
-    const angle = this.#random(x, y, seed) * 2 * Math.PI
+    const angle = this.#getRandomAngle(x, y, seed) * 2 * Math.PI
 
     this.x = Math.cos(angle)
     this.y = Math.sin(angle)
@@ -47,7 +47,11 @@ export class RandomGradient extends Vector {
    * @param {number} seed - Optional seed used to randomise.
    * @returns {number} A value between 0 and 1.
    */
-  #random (x, y, seed) {
+  #getRandomAngle (x, y, seed) {
+    /**
+     * See @link https://en.wikipedia.org/wiki/Perlin_noise#Implementation
+     * randomGradient()
+     */
     // Prime numbers are used to combine x and y.
     let finalSeed = x * 374761393 + y * 668265263 + seed * 961748941
     finalSeed = (finalSeed ^ (finalSeed >> 13)) * 1274126177

@@ -7,16 +7,18 @@
 
 import { Point } from '../src/Point.js'
 
-test('NaN in coordinates', () => {
-  expect(() => new Point(NaN, 2)).toThrow(TypeError)
-})
+describe('exceptions', () => {
+  test('NaN in coordinates', () => {
+    expect(() => new Point(NaN, 2)).toThrow(TypeError)
+  })
 
-test('Non number in coordinates', () => {
-  expect(() => new Point(1, 'number')).toThrow(TypeError)
-  expect(() => new Point('4', 3)).toThrow(TypeError)
-})
+  test('Non number in coordinates', () => {
+    expect(() => new Point(1, 'number')).toThrow(TypeError)
+    expect(() => new Point('4', 3)).toThrow(TypeError)
+  })
 
-test('Changing coordinates to non number', () => {
-  const point = new Point(1, 2)
-  expect(() => { point.x = '1' }).toThrow(TypeError)
+  test('Changing coordinates to non number', () => {
+    const point = new Point(1, 2)
+    expect(() => { point.x = '1' }).toThrow(TypeError)
+  })
 })

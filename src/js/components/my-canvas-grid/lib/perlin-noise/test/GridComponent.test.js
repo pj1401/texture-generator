@@ -7,7 +7,9 @@
 
 import { GridComponent } from '../src/GridComponent.js'
 
-test('Instantiate abstract class', () => {
-  expect(() => new GridComponent(1, 2)).toThrow(Error)
-  expect(() => new GridComponent(1, 2)).toThrow('Can\'t instantiate abstract class.')
+describe('exceptions', () => {
+  test('Instantiate abstract class', () => {
+    expect(() => new GridComponent(1, 2)).toThrow(Error)
+    expect(() => new GridComponent(1, 2)).toThrow('Can\'t instantiate abstract class.')
+  })
 })

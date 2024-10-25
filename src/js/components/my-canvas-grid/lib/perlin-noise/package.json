@@ -7,7 +7,8 @@
   "scripts": {
     "lint": "npx eslint index.js ./src || exit 0",
     "lint:fix": "npx eslint index.js ./src --fix || exit 0",
-    "test": "npx --node-options=--experimental-vm-modules jest || exit 0"
+    "test": "npx --node-options=--experimental-vm-modules jest || exit 0",
+    "test:only": "npx --node-options=--experimental-vm-modules jest -t"
   },
   "author": "Patricia Johansson <pj222uc@student.lnu.se>",
   "contributors": [
