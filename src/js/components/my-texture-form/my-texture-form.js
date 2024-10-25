@@ -4,9 +4,6 @@
  * @version 1.0.0
  */
 
-import '../my-canvas-grid/'
-import '../my-texture-form/'
-
 import { cssTemplate } from './my-texture-form.css.js'
 import { htmlTemplate } from './my-texture-form.html.js'
 
