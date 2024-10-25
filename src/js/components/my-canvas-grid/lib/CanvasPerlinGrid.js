@@ -38,7 +38,7 @@ export default class CanvasPerlinGrid extends OffscreenCanvas {
    */
   generateImage (noiseGrid) {
     this.#updateGrid(noiseGrid)
-    this.#perlin = new PerlinNoise(0, 0, this.#perlinGrid.seed)
+    this.#perlin = new PerlinNoise(this.#perlinGrid.seed)
     this.#generateGridColors()
   }
 
@@ -88,7 +88,7 @@ export default class CanvasPerlinGrid extends OffscreenCanvas {
    * @returns {number} The noise value.
    */
   #getNoiseValue (pixel) {
-    return this.#perlin.perlin(pixel.x * this.#perlinGrid.scale, pixel.y * this.#perlinGrid.scale)
+    return this.#perlin.generatePerlinNoise(pixel.x * this.#perlinGrid.scale, pixel.y * this.#perlinGrid.scale)
   }
 
   /**
