@@ -4,8 +4,8 @@
  * @version 1.0.0
  */
 
-import '../my-canvas-grid/'
-import '../my-texture-form/'
+import '../my-canvas-grid/index.js'
+import '../my-texture-form/index.js'
 
 import { cssTemplate } from './my-texture-generator.css.js'
 import { htmlTemplate } from './my-texture-generator.html.js'
