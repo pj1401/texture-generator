@@ -56,7 +56,7 @@ describe('Initialising NoiseGrid objects', () => {
   })
 })
 
-describe('Using non numbers', () => {
+describe('exceptions', () => {
   test('New grid with NaN as seed', () => {
     expect(() => new NoiseGrid(400, 400, NaN)).toThrow(TypeError)
   })
