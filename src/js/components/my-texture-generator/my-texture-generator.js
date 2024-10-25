@@ -50,5 +50,12 @@ customElements.define('my-texture-generator',
     #onFormChange (event) {
       this.#canvasGrid.setAttribute(event.detail.name, event.detail.value)
     }
+
+    /**
+     * Called after the element has been removed from the DOM.
+     */
+    disconnectedCallback () {
+      this.shadowRoot.removeEventListener('texture-form:change', this.#onFormChange)
+    }
   }
 )
