@@ -38,11 +38,6 @@ customElements.define('my-texture-form',
         (event) => this.#dispatchFormChangeEvent(event, 'width'))
       this.shadowRoot.querySelector('#height').addEventListener('change',
         (event) => this.#dispatchFormChangeEvent(event, 'height'))
-
-      this.shadowRoot.addEventListener('submit', (event) => {
-        event.preventDefault()
-        this.dispatchEvent(new window.CustomEvent('texture-form:download', { bubbles: true }))
-      })
     }
 
     /**
